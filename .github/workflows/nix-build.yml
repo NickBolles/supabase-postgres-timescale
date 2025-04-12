@@ -10,8 +10,8 @@ on:
 
 permissions:
   contents: read
-  id-token: write    
-    
+  id-token: write
+
 jobs:
   build-run-image:
     strategy:
@@ -20,14 +20,13 @@ jobs:
         include:
           - runner: larger-runner-4cpu
             arch: amd64
-          - runner: arm-runner
+          - runner: ubuntu-24.04-arm
             arch: arm64
           - runner: macos-latest
             arch: arm64
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 180
     steps:
-
       - name: Check out code
         uses: actions/checkout@v4
         with:
@@ -58,7 +57,7 @@ jobs:
         run: docker build -t base_nix -f docker/nix/Dockerfile .
       - name: Run build psql bundle
         if: matrix.runner != 'macos-latest' && matrix.runner != 'macos-13'
-        run:  |
+        run: |
           docker run -e AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }} \
                     -e AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }} \
                     -e AWS_SESSION_TOKEN=${{ env.AWS_SESSION_TOKEN }} \
@@ -80,4 +79,3 @@ jobs:
           AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
 
     name: build psql bundle on ${{ matrix.arch }}
-    

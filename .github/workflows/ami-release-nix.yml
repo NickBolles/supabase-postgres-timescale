@@ -6,9 +6,9 @@ on:
       - develop
       - release/*
     paths:
-      - '.github/workflows/ami-release-nix.yml'
-      - 'common-nix.vars.pkr.hcl'
-      - 'ansible/vars.yml'
+      - ".github/workflows/ami-release-nix.yml"
+      - "common-nix.vars.pkr.hcl"
+      - "ansible/vars.yml"
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-      
+
       - uses: DeterminateSystems/nix-installer-action@main
 
       - name: Set PostgreSQL versions
@@ -38,7 +38,7 @@ jobs:
       matrix:
         postgres_version: ${{ fromJson(needs.prepare.outputs.postgres_versions) }}
         include:
-          - runner: arm-runner
+          - runner: ubuntu-24.04-arm # arm-runner
             arch: arm64
             ubuntu_release: focal
             ubuntu_version: 20.04
@@ -138,7 +138,7 @@ jobs:
             -e "internal_artifacts_bucket=${{ secrets.PROD_ARTIFACTS_BUCKET }}" \
             -e "postgres_major_version=${{ env.POSTGRES_MAJOR_VERSION }}" \
             manifest-playbook.yml
-    
+
       - name: Upload nix flake revision to s3 prod
         run: |
           aws s3 cp /tmp/pg_binaries.tar.gz s3://${{ secrets.PROD_ARTIFACTS_BUCKET }}/upgrades/postgres/supabase-postgres-${{ steps.process_release_version.outputs.version }}/20.04.tar.gz
@@ -155,10 +155,10 @@ jobs:
         uses: rtCamp/action-slack-notify@v2
         env:
           SLACK_WEBHOOK: ${{ secrets.SLACK_NOTIFICATIONS_WEBHOOK }}
-          SLACK_USERNAME: 'gha-failures-notifier'
-          SLACK_COLOR: 'danger'
-          SLACK_MESSAGE: 'Building Postgres AMI failed'
-          SLACK_FOOTER: ''
+          SLACK_USERNAME: "gha-failures-notifier"
+          SLACK_COLOR: "danger"
+          SLACK_MESSAGE: "Building Postgres AMI failed"
+          SLACK_FOOTER: ""
 
       - name: Cleanup resources after build
         if: ${{ always() }}
