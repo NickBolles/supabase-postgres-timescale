@@ -1,7 +1,7 @@
 { lib, stdenv, fetchFromGitHub, cmake, postgresql, openssl, libkrb5 }:
 
 stdenv.mkDerivation rec {
-  pname = "timescaledb-apache";
+  pname = "timescaledb";
   version = "2.9.1";
 
   nativeBuildInputs = [ cmake ];
